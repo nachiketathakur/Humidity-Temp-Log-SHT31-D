@@ -25,6 +25,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "sht31-d.h"
+#include <stdio.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -56,7 +57,12 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+// Redirect printf to USART2
+int __io_putchar(int ch)
+{
+    HAL_UART_Transmit(&huart2, (uint8_t *)&ch, 1, HAL_MAX_DELAY);
+    return ch;
+}
 /* USER CODE END 0 */
 
 /**
@@ -91,7 +97,8 @@ int main(void)
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
   isSensorConnected = sht31d_check_sensor((uint8_t)SENSOR_I2C_ADDR, &hi2c1);
-  asm("NOP");
+  // asm("NOP");
+  printf("Sensor Connections Status: %d\r\n", isSensorConnected);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -101,6 +108,8 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+	  printf("Printing every 8 seconds\r\n");
+	  HAL_Delay(8000);
   }
   /* USER CODE END 3 */
 }
